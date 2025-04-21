@@ -45,7 +45,6 @@ const paymentMaker = usePaymentStore()
     // MAKE PAYMENT
     const makePayment = async () => {
         if(paymentDetails.value.customerEmail === '' || paymentDetails.value.customerName === ''){
-            console.log('No field must be empty')
             paymentDetails.value.error = true
             paymentDetails.value.message = 'No field must be empty'
             return
@@ -55,8 +54,6 @@ const paymentMaker = usePaymentStore()
         const payRef = await generatedId()
 
         await paymentMaker.makePayment(payRef, paymentDetails.value)
-        // console.log(paymentDetails.value)
-        // console.log(payRef)
     }
 </script>
 

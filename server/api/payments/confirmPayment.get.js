@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
       };
     }
 
-    console.log('Verifying payment with reference:', reference);
+    // console.log('Verifying payment with reference:', reference);
 
     // Get API environment variables
     const apiKey = process.env.MONNIFY_API_KEY;
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
     // Check if credentials are set
     if (!apiKey || !secretKey) {
-      console.error('Missing Monnify credentials');
+      // console.error('Missing Monnify credentials');
       return {
         success: false,
         message: 'Payment provider credentials not configured'
@@ -33,12 +33,12 @@ export default defineEventHandler(async (event) => {
       ? 'https://sandbox.monnify.com/api/v1'
       : 'https://api.monnify.com/api/v1';
 
-    console.log(`Using Monnify ${isTestMode ? 'test' : 'production'} environment`);
+    // console.log(`Using Monnify ${isTestMode ? 'test' : 'production'} environment`);
 
     // Get authentication token
     const authString = Buffer.from(`${apiKey}:${secretKey}`).toString('base64');
 
-    console.log('Requesting auth token for verification...');
+    // console.log('Requesting auth token for verification...');
     const tokenRes = await axios.post(
       `${baseUrl}/auth/login`,
       {},
@@ -48,10 +48,10 @@ export default defineEventHandler(async (event) => {
     );
 
     const token = tokenRes.data.responseBody.accessToken;
-    console.log('Auth token received successfully', token);
+    // console.log('Auth token received successfully', token);
 
     // Query transaction by reference
-    console.log('Querying transaction status...');
+    // console.log('Querying transaction status...');
 
     const encodedReference = encodeURIComponent(reference);
     // console.log(encodedReference)
@@ -63,17 +63,17 @@ export default defineEventHandler(async (event) => {
       }
     );
 
-    console.log(verifyRes)
+    // console.log(verifyRes)
 
-    console.log('Payment verification successful');
+    // console.log('Payment verification successful');
     return verifyRes.data;
   } catch (error) {
     // Enhanced error handling
     const errorData = error.response?.data;
-    console.error('Payment verification error:', errorData || error.message);
+    // console.error('Payment verification error:', errorData || error.message);
     
     if (error.response?.status === 404) {
-      console.error('Transaction not found. The payment reference may be invalid or the transaction may not exist.');
+      // console.error('Transaction not found. The payment reference may be invalid or the transaction may not exist.');
       return {
         success: false,
         message: 'Transaction not found',
@@ -84,7 +84,7 @@ export default defineEventHandler(async (event) => {
     if (error.response?.status === 401 || 
         (errorData && errorData.responseMessage && 
          errorData.responseMessage.includes('authentication'))) {
-      console.error('Authentication failed. Check your API credentials and environment settings.');
+      // console.error('Authentication failed. Check your API credentials and environment settings.');
     }
     
     return {

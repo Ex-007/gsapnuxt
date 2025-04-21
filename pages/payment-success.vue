@@ -9,7 +9,6 @@ const router = useRouter()
 const verificationComplete = ref(false)
 
 const payRef = route.query.paymentReference || paymentRef.value
-console.log(payRef)
 
 watch(() => store.canNavigate, (newVal) => {
   if(newVal){

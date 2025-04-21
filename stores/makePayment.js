@@ -65,7 +65,7 @@ const handleMonnifyCallback = async () => {
     
 
     const payRef = route.query.paymentReference || paymentRef.value
-    console.log(payRef)
+    // console.log(payRef)
     if (!payRef) return
 
     try {
@@ -74,18 +74,18 @@ const handleMonnifyCallback = async () => {
       // console.log(result)
       if (result.responseBody.paymentStatus === 'PAID') {
         paymentStatus.value = 'PAID';
-        console.log('✅ Payment Verified')
+        // console.log('✅ Payment Verified')
         paymentCompleted.value = true;
-        console.log(result.responseBody)
+        // console.log(result.responseBody)
         await saveToDatabase(result.responseBody)
         canNavigate.value = true
       } else {
-        console.warn('❌ Payment not successful or incomplete')
-        console.log(result.responseBody.paymentStatus || 'FAILED')
+        // console.warn('❌ Payment not successful or incomplete')
+        // console.log(result.responseBody.paymentStatus || 'FAILED')
         paymentStatus.value = result.responseBody.paymentStatus || 'FAILED';
       }
     } catch (e) {
-      console.error('Verification Failed:', e)
+      // console.error('Verification Failed:', e)
     } finally {
         isLoading.value = false
     }
@@ -111,7 +111,7 @@ const handleMonnifyCallback = async () => {
       if(error) throw error
     } catch (err) {
       error.value = err.message
-       console.log(err.message)
+      //  console.log(err.message)
     }
   }
 
