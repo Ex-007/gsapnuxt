@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules:['@pinia/nuxt', '@nuxtjs/supabase'],
+  modules:['@pinia/nuxt'],
   supabase:{
     url: process.env.SUPABASE_URL,
     key: process.env.SUPABASE_KEY,
@@ -19,10 +19,8 @@ export default defineNuxtConfig({
     MONNIFY_CONTRACT_CODE: process.env.MONNIFY_CONTRACT_CODE,
     MONNIFY_TEST_MODE: process.env.MONNIFY_TEST_MODE,
     public:{
-      supabase:{
-        url: process.env.SUPABASE_URL,
-        key: process.env.SUPABASE_KEY
-      }
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_KEY: process.env.SUPABASE_KEY
     }
   },
   ssr: true,
