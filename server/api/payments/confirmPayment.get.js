@@ -48,17 +48,22 @@ export default defineEventHandler(async (event) => {
     );
 
     const token = tokenRes.data.responseBody.accessToken;
-    console.log('Auth token received successfully');
+    console.log('Auth token received successfully', token);
 
     // Query transaction by reference
     console.log('Querying transaction status...');
+
+    const encodedReference = encodeURIComponent(reference);
+    // console.log(encodedReference)
     const verifyRes = await axios.get(
       // Note: Updated endpoint to use v1 instead of v2 to match the makePayment endpoint
-      `${baseUrl}/transactions/${reference}`,
+      `https://sandbox.monnify.com/api/v2/merchant/transactions/query?paymentReference=${encodedReference}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
+
+    console.log(verifyRes)
 
     console.log('Payment verification successful');
     return verifyRes.data;

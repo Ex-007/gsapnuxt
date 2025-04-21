@@ -39,9 +39,12 @@ export const usePaymentStore = defineStore('payment', () => {
               }
 
             const checkoutUrl = response.responseBody.checkoutUrl
+            const payRefj = response.responseBody.paymentReference
             console.log(checkoutUrl)
 
             if(checkoutUrl){
+                localStorage.setItem('redirectu', checkoutUrl)
+                localStorage.setItem('payref', payRefj)
                 window.location.href = checkoutUrl
             }else {
                 throw new Error('No checkout URL returned from payment provider');
@@ -79,6 +82,7 @@ const handleMonnifyCallback = async () => {
         // await saveToDatabase(result.responseBody)
       } else {
         console.warn('❌ Payment not successful or incomplete')
+        console.log(result.responseBody.paymentStatus || 'FAILED')
         paymentStatus.value = result.responseBody.paymentStatus || 'FAILED';
       }
     } catch (e) {

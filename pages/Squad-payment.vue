@@ -39,7 +39,7 @@ const paymentMaker = usePaymentStore()
           const randomIndex = Math.floor(Math.random() * characters.length);
           result += characters.charAt(randomIndex);
         }
-        return 'KKK' + result
+        return 'KKK_' + result
     }
 
     // MAKE PAYMENT

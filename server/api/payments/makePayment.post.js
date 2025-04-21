@@ -90,6 +90,8 @@ export default defineEventHandler(async (event) => {
     )
 
     console.log('Payment initialized successfully')
+    console.log("Payment initialized. Monnify ref:", initRes.data);
+
     return initRes.data
   } catch (error) {
     // Enhanced error handling
