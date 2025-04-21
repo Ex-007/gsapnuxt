@@ -7,9 +7,8 @@ export const usePaymentStore = defineStore('payment', () => {
   const amount = ref(5000)
   const paymentStatus = ref('')
   const paymentCompleted = ref(false)
+  const canNavigate = ref(false)
   
-
-
 
     // INITIALIZE THE PAYMENT
     const makePayment = async (payRef, paymentDetails) => {
@@ -65,21 +64,21 @@ const handleMonnifyCallback = async () => {
     error.value = null
     
 
-
     const payRef = route.query.paymentReference || paymentRef.value
     console.log(payRef)
     if (!payRef) return
 
     try {
-      // Step 4: Verify Payment from backend
       const result = await $fetch(`/api/payments/confirmPayment?reference=${payRef}`)
 
-      console.log(result)
+      // console.log(result)
       if (result.responseBody.paymentStatus === 'PAID') {
         paymentStatus.value = 'PAID';
         console.log('✅ Payment Verified')
         paymentCompleted.value = true;
-        // await saveToDatabase(result.responseBody)
+        console.log(result.responseBody)
+        await saveToDatabase(result.responseBody)
+        canNavigate.value = true
       } else {
         console.warn('❌ Payment not successful or incomplete')
         console.log(result.responseBody.paymentStatus || 'FAILED')
@@ -89,6 +88,30 @@ const handleMonnifyCallback = async () => {
       console.error('Verification Failed:', e)
     } finally {
         isLoading.value = false
+    }
+  }
+
+  // SAVE DETAILS TO FIREBASE
+  const saveToDatabase = async (response) => {
+    isLoading.value = true
+    error.value = null
+    const {$supabase} = useNuxtApp()
+
+    const transID = response.paymentReference
+    const email = response.customer.email
+    try {
+      const {data, error} = await $supabase
+      .from('TRANSACTIONID')
+      .insert({
+        transaction_id : transID,
+        email: email
+      })
+      .select()
+
+      if(error) throw error
+    } catch (err) {
+      error.value = err.message
+       console.log(err.message)
     }
   }
 
@@ -102,6 +125,7 @@ const handleMonnifyCallback = async () => {
     makePayment,
     handleMonnifyCallback,
     paymentStatus,
-    paymentCompleted
+    paymentCompleted,
+    canNavigate
   };
 });

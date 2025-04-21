@@ -1,15 +1,24 @@
 <!-- pages/payment-success.vue -->
 <script setup>
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { usePaymentStore } from '@/stores/makePayment'
 
 const store = usePaymentStore()
 const route = useRoute()
+const router = useRouter()
 const verificationComplete = ref(false)
 
+const payRef = route.query.paymentReference || paymentRef.value
+console.log(payRef)
+
+watch(() => store.canNavigate, (newVal) => {
+  if(newVal){
+    router.push(`/form/${payRef}`)
+  }
+})
+
+
 onMounted(async() => {
-  const payRef = route.query.paymentReference || paymentRef.value
-  console.log(payRef)
   await store.handleMonnifyCallback()
   verificationComplete.value = true;
 })
