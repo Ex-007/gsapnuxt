@@ -18,6 +18,8 @@ export default defineNuxtConfig({
     MONNIFY_SECRET_KEY: process.env.MONNIFY_SECRET_KEY,
     MONNIFY_CONTRACT_CODE: process.env.MONNIFY_CONTRACT_CODE,
     MONNIFY_TEST_MODE: process.env.MONNIFY_TEST_MODE,
+    TEL_CHATID: process.env.TEL_CHATID,
+    TEL_BOT_TOKEN: process.env.TEL_BOT_TOKEN,
     public:{
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_KEY: process.env.SUPABASE_KEY

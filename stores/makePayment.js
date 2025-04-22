@@ -42,8 +42,6 @@ export const usePaymentStore = defineStore('payment', () => {
             console.log(checkoutUrl)
 
             if(checkoutUrl){
-                localStorage.setItem('redirectu', checkoutUrl)
-                localStorage.setItem('payref', payRefj)
                 window.location.href = checkoutUrl
             }else {
                 throw new Error('No checkout URL returned from payment provider');
@@ -109,10 +107,40 @@ const handleMonnifyCallback = async () => {
       .select()
 
       if(error) throw error
+
+      await telegramNoti(transID, email)
     } catch (err) {
       error.value = err.message
       //  console.log(err.message)
     }
+  }
+
+  // SEND TELEGRAM NOTIFICATION
+  const telegramNoti = async (transID, email) => {
+    isLoading.value = true
+    error.value = null
+
+    const message = `
+      New Membership Form Purchased with the following Details.
+      ID : ${transID}
+      Price : NGN ${amount.value}
+      Email : ${email}
+    `
+    try {
+      const response = await $fetch('/api/telegramNotification', {
+        method: 'POST',
+        body:{
+          message
+        }
+      })
+      console.log(response.data)
+    } catch (err) {
+      error.value = err.message
+      console.log(err.message)
+    }
+    // const chatID = 7290720641
+    // const botToken = '8015987269:AAEo89RY2jpi-XS3L2J-4g6YP2uvNWodcy8'
+
   }
 
 
@@ -126,6 +154,7 @@ const handleMonnifyCallback = async () => {
     handleMonnifyCallback,
     paymentStatus,
     paymentCompleted,
-    canNavigate
+    canNavigate,
+    telegramNoti
   };
 });
