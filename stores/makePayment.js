@@ -8,7 +8,39 @@ export const usePaymentStore = defineStore('payment', () => {
   const paymentStatus = ref('')
   const paymentCompleted = ref(false)
   const canNavigate = ref(false)
+  const alreadyMember = ref(false)
+  const alreadyMemDet = ref(null)
   
+  // CHECK IF THE USER IS ALREADY A MEMBER TO AVOID REGISTERING FOR THE SAME PERSON TWICE IN THE DATABASE
+  const checkData = async(payRef, paymentDetails) => {
+    isLoading.value = true
+    error.value = null
+    const {$supabase} = useNuxtApp()
+    const email = paymentDetails.customerEmail
+    try {
+      const {data, error:checkError} = await $supabase
+      .from('TRANSACTIONID')
+      .select('*')
+      .eq('email', email)
+      .single()
+
+      if(checkError){
+        if (checkError.code === 'PGRST116') {
+            error.value = 'Registration ID not found'
+            await makePayment(payRef, paymentDetails)
+            isLoading.value = false
+            return
+        }
+        throw checkError
+    }
+    alreadyMember.value = true
+    alreadyMemDet.value = data
+    } catch (err) {
+      error.value = err.message
+    } finally{
+      isLoading.value = false
+    }
+  }
 
     // INITIALIZE THE PAYMENT
     const makePayment = async (payRef, paymentDetails) => {
@@ -199,6 +231,9 @@ const handleMonnifyCallback = async () => {
     paymentStatus,
     paymentCompleted,
     canNavigate,
-    telegramNoti
+    telegramNoti,
+    checkData,
+    alreadyMember,
+    alreadyMemDet
   };
 });

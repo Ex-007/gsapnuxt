@@ -10,6 +10,7 @@
             <label for="c-email">Enter Email</label>
             <input type="email" id="c-email" placeholder="Enter Email" required v-model="paymentDetails.customerEmail">
             <p v-if="paymentDetails.error">{{ paymentDetails.message }}</p>
+            <p v-if="alreadyDet.toShow">Hello, you're already a member with registration ID :{{ alreadyDet.message }}</p>
             <button type="submit">Submit</button>
         </form>
     </div>
@@ -53,8 +54,20 @@ const paymentMaker = usePaymentStore()
         paymentDetails.value.error = ''
         const payRef = await generatedId()
 
-        await paymentMaker.makePayment(payRef, paymentDetails.value)
+        await paymentMaker.checkData(payRef, paymentDetails.value)
     }
+
+    const alreadyDet = ref({
+        toShow: false,
+        message: ''
+
+    })
+    watch(() => paymentMaker.alreadyMember, (newVal) => {
+        if(newVal){
+            alreadyDet.value.toShow = true
+            alreadyDet.value.message = paymentMaker.alreadyMemDet.transaction_id
+        }
+    })
 </script>
 
 <style scoped>
