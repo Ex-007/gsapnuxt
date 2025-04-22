@@ -89,7 +89,7 @@ const handleMonnifyCallback = async () => {
     }
   }
 
-  // SAVE DETAILS TO FIREBASE
+  // SAVE DETAILS TO SUPABASE
   const saveToDatabase = async (response) => {
     isLoading.value = true
     error.value = null
@@ -109,6 +109,7 @@ const handleMonnifyCallback = async () => {
       if(error) throw error
 
       await telegramNoti(transID, email)
+      await sendEmail(email, transID)
     } catch (err) {
       error.value = err.message
       //  console.log(err.message)
@@ -138,10 +139,53 @@ const handleMonnifyCallback = async () => {
       error.value = err.message
       console.log(err.message)
     }
-    // const chatID = 7290720641
-    // const botToken = '8015987269:AAEo89RY2jpi-XS3L2J-4g6YP2uvNWodcy8'
-
   }
+
+  // SENDIGN EMAILS
+  const sendEmail = async (email, transID) => {
+    const to = email
+    const from = 'KKK-Toluwalase@kkktoluwalase.org'
+    const subject = 'KKK Cooperative Form Purchase'
+    const text = `
+      KKK Toluwalase Cooperative Multi-Purpose Society
+      
+      Dear ${to}, Congratulations on Joining the winning team, your form purchase was Successful.
+      Your unique ID is -- ${transID}
+      It is nice to have you onboard with us.
+
+      If you have any further enquiry that is not on our website, please reach out on toluwalasecooperative2021@gmail.com or through the following numbers--
+      09123456789 or 09087654321
+
+      🎉🎉Welcome Once Again 🎉🎉
+    `
+      try {
+        const { data, error } = await useFetch('/api/send-email', {
+          method: 'POST',
+          body: {
+            to,
+            from,
+            subject,
+            text
+          }
+        });
+  
+        if (error.value) {
+          console.error('API error:', error.value);
+          throw new Error(error.value.data?.error || 'Failed to send email');
+        }
+  
+        if (data.value?.error) {
+          console.error('Server reported error:', data.value.error);
+          throw new Error(data.value.error);
+        }
+  
+        console.log('Email sent successfully:', data.value);
+        return data.value;
+      } catch (err) {
+        console.error('Email sending error:', err);
+        return { error: err.message || 'Unknown error occurred' };
+      }
+    };
 
 
 

@@ -3,17 +3,14 @@ export default defineEventHandler(async(event) => {
     const TEL_BOT_TOKEN = process.env.TEL_BOT_TOKEN
     const TEL_CHATID = process.env.TEL_CHATID
 
+    // extract the body contents
     const body = await readBody(event)
-
-    console.log(JSON.stringify(body))
 
     // CHECK IF THE KEYS ARE SET
     if(!TEL_BOT_TOKEN || !TEL_CHATID){
-        console.log('Tokens are missing')
         return
     }
-    console.log('about to send Telegram Message')
-
+    // MAKING THE CALL
     try {
         const response = await axios.post(
             `https://api.telegram.org/bot${TEL_BOT_TOKEN}/sendMessage`,
